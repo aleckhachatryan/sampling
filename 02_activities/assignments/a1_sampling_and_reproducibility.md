@@ -10,12 +10,26 @@ Modify the number of repetitions in the simulation to 100 (from the original 100
 
 Alter the code so that it is reproducible. Describe the changes you made to the code and how they affected the reproducibility of the script file. The output does not need to match Whitby’s original blogpost/graphs, it just needs to produce the same output when run multiple times
 
-# Author: YOUR NAME
+# Author: Alec Khachatryan
 
 ```
-Please write your explanation here...
+Existing code (non-reproducible)
 
-```
+1. Target population - Create DataFrame for people at events with initial infection and traced status 
+The target population ('ppl', N = 1000) includes attendees at two weddings (2 x 100 = 100 people) and 80 brunches (80 x 10 = 800 people). It is assumed that they haven't been infected or traced prior to attending the events ('infected' = False, 'traced' = True/False). 
+2. Sampling frame - Infect a random subset of people (simple random sampling without replacement) 
+The sampled frame ('infected_indices', n = 100) represents infected individuals and equals 10% of the target population (attack_rate = 0.10, 'infected' = True). It is generated randomly from the sample frame. This places the target population in two non-overlapping strata ('infected' = False and 'infected' = True). Each individual has equal chances of being selected. 
+3. Primary contact tracing (stratified random sampling) 
+This sample ('traced', n = 20) is taken from the 'infected' strata and represents randomly tested individuals according to the article that states that an infection has a 20% chance of being traced (trace_success = 0.20). New numbers are generated at each generation of 'infected_indices'. Each individual has equal chances of being selected.  
+4. Secondary contact tracing based on wedding / brunch attendance (non-probability sampling). This (event_trace_counts) represents tested individuals according to the article that states that 100% of attendees are tested at those events where at least 2 infections were discovered during primary contact tracing. New numbers are generated at each generation of 'infected_indices'. This is a non-probability sample as all those who have attended specific events will be tested. 
+5. Calculate proportions of infections and traces
+These proportions are equal and new values are generated at each generation of 'infected_indices'. The proportions are calculated according to the basis probability formula:  P(event) = (favorable outcomes) / (total outcomes). Similarly, when the simulation is run many times, in the resulting data frame (props_df) 'infections' equal 'traces' indicating that all infections are traced. These proportions are also seen on the resulting histogram. 
+
+Amended code (reproducible) 
+
+# Setting seed for reproducibility
+np.random.seed(1)
+Setting seed ensures that the results of our experiments can be reproduced. I set seed with a value of 1, but I can use any seed value. As long as the seed value remains the same, the random numbers generated in the model will be the same, meaning that the resulting distributions, proportions, and histograms will be similar.  
 
 
 ## Criteria
